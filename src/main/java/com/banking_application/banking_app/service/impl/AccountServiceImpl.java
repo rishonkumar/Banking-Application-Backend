@@ -8,6 +8,8 @@ import com.banking_application.banking_app.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -26,5 +28,11 @@ public class AccountServiceImpl implements AccountService {
 
         //return type is dto so map it to dto and return
         return AccountMapper.mapToAccountDto(savedAccount);
+    }
+
+    @Override
+    public AccountDto getAccountById(Long id) throws AccountNotFoundException {
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException("Account doesnt not exists"));
+        return AccountMapper.mapToAccountDto(account);
     }
 }
