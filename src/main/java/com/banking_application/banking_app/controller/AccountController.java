@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -26,5 +28,31 @@ public class AccountController {
         AccountDto accountDto = accountService.getAccountById(id);
         if(accountDto == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/deposit")
+    public ResponseEntity<AccountDto> deposit (@PathVariable Long id,@RequestBody Map<String,Long> request) throws AccountNotFoundException {
+        Long amount = request.get("amount");
+        AccountDto accountDto =  accountService.deposit(id, amount);
+        return ResponseEntity.ok(accountDto);
+    }
+
+    @PutMapping("/{id}/withdraw")
+    public ResponseEntity<AccountDto>withdrawal(@PathVariable Long id,@RequestBody Map<String,Long> request) throws AccountNotFoundException {
+        Long amount = request.get("amount");
+        AccountDto accountDto = accountService.withdraw(id,amount);
+        return ResponseEntity.ok(accountDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AccountDto>>getAllAcounts() {
+        List<AccountDto>accountDtos = accountService.getAllAccounts();
+        return ResponseEntity.ok(accountDtos);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAccountById(@PathVariable Long id) throws AccountNotFoundException {
+        accountService.deleteAccountById(id);
+        return ResponseEntity.ok("Account deleted successfully");
     }
 }
